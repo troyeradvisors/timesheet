@@ -1,0 +1,38 @@
+﻿@model IEnumerable<Timesheet.Domain.TaskType>
+
+@{
+    ViewBag.Title = "Tasks";
+}
+
+<h2>Task Types</h2>
+
+<p>
+    @Html.ActionLink("Create", "Create")
+</p>
+<table>
+    <tr>
+        <th>
+            Name
+        </th>
+        <th>
+			Abbr
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ShortName)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.ID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.ID })
+        </td>
+    </tr>
+}
+
+</table>

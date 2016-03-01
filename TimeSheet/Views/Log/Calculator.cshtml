@@ -1,0 +1,21 @@
+﻿@model Calculator
+
+<div id="update">
+@using (Ajax.BeginForm("Calculator", new AjaxOptions() { UpdateTargetId = "update" }))
+{
+	int length = Model.Times == null ? 0 : Model.Times.GetLength(0);
+	<table>
+	@for (int i = 0; i < length + 1; ++i)
+ {
+	 bool empty = i == length;
+		<tr>
+		@for (int j = 0; j < 2; ++j)
+  {
+			<td>@Html.TextBox(String.Join(".", "Times", i, j), empty || Model.Times[i, j] == null ? "" : Model.Times[i, j].ToShortTimeString(), new { placeholder = j == 0 ? "From" : "To" })</td>
+  }
+		</tr>
+ }
+	</table>
+	<p><input type="submit" value="Save" /></p>
+}
+</div>

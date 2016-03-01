@@ -1,0 +1,12 @@
+﻿
+<nav>
+	<ul class="menu">
+		<li>@Html.MenuLink("Log", "Index", "Log")</li>
+		<li>@Html.MenuLink("User Summary", "Index", "Summary")</li>
+		<li>@Html.MenuLink("Task Summary", "Index", "TaskSummary")</li>
+		@if (Roles.IsUserInRole("Admin"))
+		{
+		<li>@Html.MenuLink("Tasks", "Index", "Task")</li>
+		}
+	</ul>
+</nav>

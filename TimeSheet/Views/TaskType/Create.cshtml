@@ -1,0 +1,29 @@
+﻿@model Timesheet.Domain.TaskType
+
+@{
+    ViewBag.Title = "Create Task Type";
+}
+
+<h1>Create <span>Task Type</span></h1>
+
+@using (Html.BeginForm()) {
+    @Html.ValidationSummary(true)
+
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Name)
+            @Html.ValidationMessageFor(model => model.Name)
+        </div>
+
+        <div class="editor-field">
+            @Html.EditorFor(model => model.ShortName)
+            @Html.ValidationMessageFor(model => model.ShortName)
+        </div>
+
+        <p>
+            <input type="submit" value="Create" />
+        </p>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

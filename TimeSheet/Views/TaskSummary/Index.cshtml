@@ -1,0 +1,84 @@
+﻿@model SummaryModel
+
+
+
+@{
+    ViewBag.Title = "Summary";
+	bool isAdmin = User.IsInRole("Admin");
+	
+}
+
+@helper Format(double x)
+{
+	<span>@x.ToString("0.00")</span>
+}
+
+@using (@Html.BeginForm())
+{
+	<div hidden="hidden">
+        <input id="BeginDate" name="BeginDate" type="text" value="@Model.BeginDate.ToShortDateString()" />  @Html.ValidationMessageFor(e=>e.BeginDate) <input id="EndDate" name="EndDate" type="text" value="@Model.EndDate.ToShortDateString()" /> @Html.ValidationMessageFor(e=>e.EndDate)</div>
+	<div>
+		@Html.HiddenFor(m => m.ID) 
+        @Html.DropDownListFor(e=>e.TaskTypeID, Model.TaskSelectList, "ALL TASKS") 
+        <input type="submit" value="Update" />
+	</div>
+    
+}
+
+
+@foreach (var type in SummaryModel.TaskTypes.Where(e=>Model.TaskTypeID == null || e.ID == Model.TaskTypeID.Value).OrderBy(e=>e.Name))
+{
+    <h1>@type.Name (@type.ShortName) <span>Tasks</span></h1>
+
+    <table cellspacing="0" id="tasks">
+	    <tr>
+		    <th>Task</th><th>User</th><th>Ended</th><th>Hours</th>
+	    </tr>
+    @foreach (var u in Model.TaskSummaries.Where(e=>e.Task.Type == type.ID ).OrderBy(e=>e.Task.Name))
+    {
+        <tr class="title">
+            @{string date = u.Task.CompleteDate != null ? u.Task.CompleteDate.Value.ToShortDateString() : "-";}
+            <td>@u.Task.Name</td><td></td><td>@date</td><td class="right">@u.Hours</td>
+        </tr>
+            foreach (var x in u.Users)
+            {
+                <tr><td></td><td>@x.Name</td><td>@x.LastWorkDate</td><td class="right">@x.Hours</td></tr>
+            } 
+    }
+    </table>
+    <br /><br />
+}
+
+
+
+
+<style>
+    .very-important {
+        font-weight: bold;
+        color:white;
+        text-decoration:underline;
+    }
+    .important {
+        font-weight: bold;
+        color:white;
+    }
+    .right {
+        text-align: right;
+    }
+    table#tasks { margin-left:50px;
+    }
+    #tasks th {
+        color: #1C6B77;
+    }
+    table#tasks tr.title td {
+        background: url(Content/Styles/images/module_bg_line.png) repeat-x bottom;
+        padding-top: 2em;
+        color:white;
+        font-weight:bold;
+    }
+    p.note {
+        margin: 1em 0 0 1em;
+        color:red;
+    }
+</style>
+

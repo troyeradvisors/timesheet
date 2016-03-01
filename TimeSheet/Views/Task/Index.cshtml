@@ -1,0 +1,50 @@
+﻿@model IEnumerable<Timesheet.Domain.Task>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Tasks</h2>
+
+<p>
+    @Html.ActionLink(" Add Task ", "Create")&nbsp;&nbsp | &nbsp;&nbsp
+    @Html.ActionLink(" Manage Types ", "Index", "TaskType") 
+</p>
+<table>
+    <tr>
+        <th>
+            Type
+        </th>
+        <th>
+            Name
+        </th>
+        <th>
+			Start
+        </th>
+        <th>
+			End
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.ActionLink(item.TaskType.Name, "Edit", "TaskType", new {id=item.Type}, null) 
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td><td>
+            @Html.DisplayFor(modelItem => item.CreateDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CompleteDate)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.ID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.ID })
+        </td>
+    </tr>
+}
+
+</table>

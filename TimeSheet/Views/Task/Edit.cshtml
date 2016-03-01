@@ -1,0 +1,41 @@
+﻿@model Timesheet.Domain.Task
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h1>Edit <span>Tasks</span></h1>
+
+@using (Html.BeginForm()) {
+    @Html.ValidationSummary(true)
+
+        @Html.HiddenFor(model => model.ID)
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Name)
+            @Html.ValidationMessageFor(model => model.Name)
+        </div>
+        
+        <div class="editor-field">
+            @Html.DropDownListFor(e=>e.Type, (SelectList)ViewBag.Types, "Type")
+            @Html.ValidationMessageFor(model => model.Type)
+        </div>
+    
+        <div class="editor-field">
+            <input id="CreateDate" name="CreateDate" type="text" value="@Model.CreateDate.ToShortDateString()" />
+            @Html.ValidationMessageFor(model => model.CreateDate)
+        </div>
+
+        <div class="editor-field">
+            @{ string format = @Model.CreateDate == null ? "" : @Model.CreateDate.ToShortDateString(); }
+            <input id="CompleteDate" name="CompleteDate" type="text" value="@format" />
+            @Html.ValidationMessageFor(model => model.CompleteDate)
+        </div>
+
+        <p>
+            <input type="submit" value="Save" />
+        </p>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

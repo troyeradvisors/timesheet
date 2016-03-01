@@ -1,0 +1,103 @@
+﻿@model SummaryModel
+
+
+
+@{
+    ViewBag.Title = "Summary";
+	bool isAdmin = User.IsInRole("Admin");
+	
+}
+
+@helper Format(double x)
+{
+	<span>@x.ToString("0.00")</span>
+}
+
+<h1>Summary</h1>
+
+@using (@Html.BeginForm())
+{
+	<div><input id="BeginDate" name="BeginDate" type="text" value="@Model.BeginDate.ToShortDateString()" />  @Html.ValidationMessageFor(e=>e.BeginDate) <input id="EndDate" name="EndDate" type="text" value="@Model.EndDate.ToShortDateString()" /> @Html.ValidationMessageFor(e=>e.EndDate)</div>
+	<div>
+		@if (!isAdmin) { @Html.HiddenFor(m => m.ID) }
+		else 
+        { 
+            @Html.DropDownListFor(e=>e.ID, Model.SelectList, "ALL USERS")
+        }
+        @Html.HiddenFor(m => m.TaskTypeID)
+	</div>
+	<p><input type="submit" value="Update" /></p>
+    
+}
+
+@foreach (var u in SummaryModel.Users)
+{
+	if (Model.ID != null && u.ID != Model.ID) { continue; }
+	
+	<h1>@u.FirstName <span>@u.LastName</span></h1>
+	<table>
+		<tr>
+			<th></th><th></th><th colspan="3">Average</th>
+		</tr>
+		<tr>
+			<th></th><th class="left">Total Hrs</th><th>Daily</th><th>Weekly</th><th>Monthly</th>
+		</tr>
+        @{ List<Summary> summaries = Model.Summaries.Where(e => e.UserID == u.ID).OrderBy(e => e.Task).ToList(); }
+		@foreach (Summary s in summaries)
+		{
+			<tr>
+				<td>@s.Task</td><td class="important right left">@Format(s.TotalHours)</td><td>@Format(@s.DailyHours)</td><td>@Format(@s.WeeklyHours)</td><td>@Format(@s.MonthlyHours)</td>
+			</tr>
+		}
+		<tr>
+			<td>Total</td><td class="very-important right left">@Format(summaries.Sum(e=>e.TotalHours))</td><td>@Format(summaries.Sum(e=>e.DailyHours))</td><td>@Format(summaries.Sum(e=>e.WeeklyHours))</td><td>@Format(@summaries.Sum(e=>e.MonthlyHours))</td>
+		</tr>
+	</table>
+        if (summaries.Count > 0 && summaries[0].MissingBusinessDays != string.Empty) 
+        { 
+            <p class="note"> <span style="font-weight:bold">Missing</span> @summaries[0].MissingBusinessDays </p>
+        }  
+	<br /><br />
+}
+
+
+
+<style>
+    .very-important {
+        font-weight: bold;
+        color:white;
+        text-decoration:underline;
+    }
+    .important {
+        font-weight: bold;
+        color:white;
+    }
+    .right {
+        text-align: right;
+    }
+    table#tasks { margin-left:50px;
+    }
+    #tasks th {
+        color: #1C6B77;
+    }
+    table th.left, td.left {
+        padding-left: 10px;
+    }
+    table th.left{
+        padding-right: 20px;
+    }
+    table td.left {
+        padding-right: 30px;
+    }
+    table#tasks tr.title td {
+        background: url(Content/Styles/images/module_bg_line.png) repeat-x bottom;
+        padding-top: 2em;
+        color:white;
+        font-weight:bold;
+    }
+    p.note {
+        margin: 1em 0 0 1em;
+        color:red;
+    }
+</style>
+

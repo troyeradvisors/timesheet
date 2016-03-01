@@ -1,0 +1,138 @@
+﻿@if (false) {<script src="@Url.Content("~/Content/Scripts/Base/jquery-1.7.1-vsdoc.js")" type="text/javascript" ></script> <script src="@Url.Content("~/Content/Scripts/Base/jquery.validate-vsdoc.js")" type="text/javascript" ></script>}
+
+
+
+
+@model IEnumerable<LogModel>
+@{
+    ViewBag.Title = "Log";
+}
+
+
+
+@*<h1>Calculator</h1>
+@Html.Action("Calculator")
+*@
+
+<h1>Log <span>Hours</span></h1>
+
+@using (Html.BeginForm())
+{
+@Html.ValidationSummary(true)
+	 
+	 int i=0;
+	foreach (LogModel model in Model)
+	{
+	<table class="log-table">
+		@if (i==0){
+		<tr><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th><th>Sun</th><th></th><th></th></tr>
+		}
+			@{int maxJ = model.Logs.GetLength(0) + 1; 
+			int maxK = model.Logs.GetLength(1);}
+		  @for (int j=0; j<maxJ; ++j)
+	   {
+		   bool isLast = j == maxJ - 1;
+			<tr>
+				@for (int k = 0; k < maxK; ++k)
+	{
+				<td>
+					@Html.TextBox(String.Join(".", "Hour", i, j, k), (isLast || model.Logs[j,k] == null ? "" : model.Logs[j,k].Hours.ToString()), new { placeholder = model.Monday.AddDays(k).ToString("M/dd") })
+				</td>
+	}
+				<td class="row-total"></td> 
+				
+				<td>@Html.DropDownList(String.Join(".","Task",i,j), new SelectList(model.AvailableTasks, "ID", "ListDisplay",  isLast ? 0 : model.ActualTasks[j].ID), "") </td>
+			</tr>
+		}
+		<tr>
+			@for (int k=0; k<7; ++k){<td class="col-total"></td>} <td class="table-total"></td>
+		</tr>
+	 
+	</table>
+		++i;
+		
+	}
+	<p>
+			<input type="submit" value="Save" />
+	</p>
+
+	
+	
+	
+}
+<style>
+	.col-total, .row-total, .table-total {  text-align: center; color: rgba(255, 255, 255, 0.2); }
+	.col-total { line-height: 0; }
+	.table-total {  color:  rgba(255,255,255,.4); }
+</style>
+<script>
+
+    /*
+	$(window).on("beforeunload", function ()
+	{
+		var $form = $(this).find('form');
+
+		$.ajax({
+			type: "POST",
+			url: $form.attr('action'),
+			data: $form.serialize()});
+	});*/
+
+	$.fn.IncrementArray = function (dimension, amount) {
+		$(this).val("");
+		var s = String($(this).attr("name"));
+		var ray = s.split(".");
+		ray[dimension+1] = parseInt(ray[dimension+1]) + amount;
+		$(this).attr("name", ray.join("."));
+		return $(this);
+	}
+
+	$("table td input[type='text']").change(function ()
+	{
+		// If this is the last data row, insert a new empty row after it
+		var row = $(this).closest("tr");
+		if (row.index() == $(this).closest("table").find("tr").not(":has(.col-total)").last().index()) {
+			row.clone(true, true).insertAfter(row).find("input[type='text'], select").each(function()
+			{
+				$(this).IncrementArray(1, 1);
+			})
+		}
+
+		// If this is now an empty row, remove it.
+		if (!row.find("td input[type='text']").is(function () { return $(this).val() != ""; }))
+			row.remove();
+
+
+        var sum = 0.0;
+        $(this).closest("tr").find("input[type='text']").each(function ()
+        {
+        var x = parseFloat($(this).val());
+        if (!isNaN(x)) sum += x;
+		}).end().find(".row-total").text(sum == 0 ? "" : sum.toFixed(1));
+			
+        sum = 0.0;
+        var col = $(this).parent("td").index()+1;
+        $(this).closest("table").find("td:nth-child(" +col+ ")").find("input[type='text']").each( function ()
+        {
+        var x = parseFloat($(this).val());
+        if (!isNaN(x)) sum += x;
+		}).end().filter(".col-total").text(sum==0?"":sum.toFixed(1));
+
+        var sum = 0.0;
+        $(this).closest("table").find("td input[type='text']").each(function () {
+        var x = parseFloat($(this).val());
+        if (!isNaN(x)) sum += x;
+        }).end().find(".table-total").text(sum == 0 ? "" : sum.toFixed(1));
+
+	  }).change();
+
+</script>
+
+
+
+@*<script type="text/javascript">
+	$.validator.addMethod("ensureTaskIsSelected", function(value, element)
+	{
+		value.
+	}, "Must select a task on non-empty rows.")
+</script>*@
