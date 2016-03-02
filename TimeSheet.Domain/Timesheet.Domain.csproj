@@ -72,7 +72,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Libraries\RepoInfrastructure\RepoInfrastructure.csproj">
+    <ProjectReference Include="..\..\Libs\RepoInfrastructure\RepoInfrastructure.csproj">
       <Project>{cbabfa62-32db-4504-a3de-66fbdb0632c2}</Project>
       <Name>RepoInfrastructure</Name>
     </ProjectReference>
